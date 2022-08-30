@@ -50,7 +50,20 @@ boltApp.event("app_mention", async ({ event, client }) => {
   }
 });
 
+boltApp.action("button_click", async ({ body, ack, say }) => {
+  console.log(body);
+
+  await ack();
+
+  try {
+    await say(`일해라, <@U0268V06F5M>!`);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 expressApp.use("/slack/events", boltReceiver.app);
+expressApp.use("/slack/interactive-endpoint", boltReceiver.app);
 
 createServer(expressApp).listen(process.env.PORT ?? "3000", () => {
   console.log(
