@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { App as BoltApp, ExpressReceiver } from "@slack/bolt";
+import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
 
 dotenv.config();
 
@@ -62,7 +63,23 @@ boltApp.action("button_click", async ({ body, ack, say }) => {
   }
 });
 
+boltApp.command("/review-request", async ({ ack, body, client, logger }) => {
+  await ack();
+
+  try {
+    // Call views.open with the built-in client
+    const viewOpenResult = await client.views.open({
+      trigger_id: body.trigger_id, // Pass a valid trigger_id within 3 seconds of receiving it
+      view: REVIEW_REQUEST_MODAL, // View payload
+    });
+    logger.info(viewOpenResult);
+  } catch (error) {
+    logger.error(error);
+  }
+});
+
 expressApp.use("/slack/events", boltReceiver.app);
+expressApp.use("/slack/command", boltReceiver.app);
 expressApp.use("/slack/interactive-endpoint", boltReceiver.app);
 
 createServer(expressApp).listen(process.env.PORT ?? "3000", () => {
