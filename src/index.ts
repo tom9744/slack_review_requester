@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { App as BoltApp, ExpressReceiver } from "@slack/bolt";
 import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
+import { generateReviewRequest } from "./services/review-request-generator";
 
 dotenv.config();
 
@@ -52,8 +53,6 @@ boltApp.event("app_mention", async ({ event, client }) => {
 });
 
 boltApp.action("button_click", async ({ body, ack, say }) => {
-  console.log(body);
-
   await ack();
 
   try {
@@ -73,6 +72,26 @@ boltApp.command("/review-request", async ({ ack, body, client, logger }) => {
       view: REVIEW_REQUEST_MODAL, // View payload
     });
     logger.info(viewOpenResult);
+  } catch (error) {
+    logger.error(error);
+  }
+});
+
+boltApp.view("new_review_request", async ({ ack, body, client, logger }) => {
+  await ack();
+
+  const message = generateReviewRequest({
+    authorID: body.user.id,
+    reviewerIDList: ["U0268V06F5M"],
+    workSummary: "테스트",
+    dueTime: "EOD",
+    mergeRequestURL:
+      "https://git.projectbro.com/bro/Tsl_server/-/merge_requests/30451",
+  });
+
+  // Message the user
+  try {
+    await client.chat.postMessage(message);
   } catch (error) {
     logger.error(error);
   }
