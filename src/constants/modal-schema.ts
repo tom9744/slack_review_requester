@@ -27,6 +27,7 @@ interface TypedInputBlock<T extends InputElementType> extends InputBlock {
 
 const REVIEWER: TypedInputBlock<MultiUsersSelect> = {
   type: "input",
+  block_id: "reviewer",
   element: {
     type: "multi_users_select",
     action_id: "reviewer_select-action",
@@ -37,6 +38,7 @@ const REVIEWER: TypedInputBlock<MultiUsersSelect> = {
 
 const WORK_SUMMARY: TypedInputBlock<PlainTextInput> = {
   type: "input",
+  block_id: "work_summary",
   element: {
     type: "plain_text_input",
     action_id: "work_summary_input-action",
@@ -47,6 +49,7 @@ const WORK_SUMMARY: TypedInputBlock<PlainTextInput> = {
 
 const MR_URL: TypedInputBlock<PlainTextInput> = {
   type: "input",
+  block_id: "mr_url",
   element: {
     type: "plain_text_input",
     action_id: "mr_url_input-action",
@@ -56,6 +59,7 @@ const MR_URL: TypedInputBlock<PlainTextInput> = {
 
 const PRIORITY: TypedInputBlock<StaticSelect> = {
   type: "input",
+  block_id: "priority",
   element: {
     type: "static_select",
     action_id: "priority_select-action",
@@ -91,6 +95,7 @@ const PRIORITY: TypedInputBlock<StaticSelect> = {
 
 const ESTIMATED_TIME_TO_COMPLETE: TypedInputBlock<PlainTextInput> = {
   type: "input",
+  block_id: "estimated_time_to_complete",
   element: {
     type: "plain_text_input",
     action_id: "estimated_time_to_complete-action",
@@ -101,6 +106,7 @@ const ESTIMATED_TIME_TO_COMPLETE: TypedInputBlock<PlainTextInput> = {
 
 const CHERRY_PICK_BRANCH: TypedInputBlock<PlainTextInput> = {
   type: "input",
+  block_id: "cherry_pick_branch",
   element: {
     type: "plain_text_input",
     action_id: "cherry_plck_branch-action",
