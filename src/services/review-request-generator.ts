@@ -3,13 +3,13 @@ import { ChatPostMessageArguments } from "@slack/web-api";
 type DueTime = "ASAP" | "EOD" | "TOMORROW" | "THIS WEEK" | "IDC";
 
 interface ReviewRequestArgs {
-  authorID: string;
-  reviewerIDList: string[];
+  author: string;
+  reviewerList: string[];
   workSummary: string;
-  mergeRequestURL: `https://git.projectbro.com/bro/Tsl_server/-/merge_requests/${number}`;
+  mergeRequestUrl: string;
   dueTime: DueTime;
-  etc?: string;
-  cherryPickBranch?: string;
+  estimatedTime?: string;
+  cherryPick?: string;
 }
 
 const FRONTEND_MR_CHNNEL_ID = "C040AM5Q198";
@@ -17,7 +17,7 @@ const FRONTEND_MR_CHNNEL_ID = "C040AM5Q198";
 export const generateReviewRequest = (
   args: ReviewRequestArgs
 ): ChatPostMessageArguments => {
-  const { etc = "-", cherryPickBranch = "-" } = args;
+  console.log("args", args);
 
   return {
     channel: FRONTEND_MR_CHNNEL_ID,
@@ -27,15 +27,14 @@ export const generateReviewRequest = (
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "<@" + args.authorID + "> 님이 리뷰를 요청했습니다.",
+          text: "<@" + args.author + "> 님이 리뷰를 요청했습니다.",
         },
       },
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text:
-            "*리뷰어*\n" + `${args.reviewerIDList.map((id) => `<@${id}>, `)}`,
+          text: "*리뷰어*\n" + `${args.reviewerList.map((id) => `<@${id}> `)}`,
         },
       },
       {
@@ -52,11 +51,13 @@ export const generateReviewRequest = (
         fields: [
           {
             type: "mrkdwn",
-            text: "*예상 소요 시간*\n" + etc,
+            text:
+              "*예상 소요 시간*\n" +
+              (args.estimatedTime ? args.estimatedTime : "-"),
           },
           {
             type: "mrkdwn",
-            text: "*체리픽*\n" + cherryPickBranch,
+            text: "*체리픽*\n" + (args.cherryPick ? args.cherryPick : "-"),
           },
         ],
       },

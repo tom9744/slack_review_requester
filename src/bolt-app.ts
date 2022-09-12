@@ -1,5 +1,5 @@
 import { App, ExpressReceiver } from "@slack/bolt";
-import { Application } from "express";
+import e, { Application } from "express";
 import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
 import { generateReviewRequest } from "./services/review-request-generator";
 
@@ -92,21 +92,52 @@ class SlackBoltImpl implements SlackBolt {
 
     this._boltApp.view(
       "new_review_request",
-      async ({ ack, body, client, logger }) => {
+      async ({ ack, view, body, client, logger }) => {
         await ack();
 
+        const inputValueList = REVIEW_REQUEST_MODAL.blocks.reduce<{
+          [key: string]: any;
+        }>((acc, { block_id, element }) => {
+          const viewStateValue = view.state.values[block_id][element.action_id];
+          const key = block_id
+            .split("_")
+            .map((string, index) => {
+              if (index === 0) {
+                return string;
+              }
+              return string.charAt(0).toUpperCase() + string.slice(1);
+            })
+            .join("");
+
+          switch (viewStateValue.type) {
+            case "multi_users_select":
+              acc[key] = viewStateValue.selected_users;
+              return acc;
+            case "static_select":
+              acc[key] = viewStateValue.selected_option?.value;
+              return acc;
+            case "plain_text_input":
+              acc[key] = viewStateValue.value;
+              return acc;
+            default:
+              return acc;
+          }
+        }, {});
+
         const message = generateReviewRequest({
-          authorID: body.user.id,
-          reviewerIDList: ["U0268V06F5M"],
-          workSummary: "테스트",
-          dueTime: "EOD",
-          mergeRequestURL:
-            "https://git.projectbro.com/bro/Tsl_server/-/merge_requests/30451",
+          author: body.user.id,
+          reviewerList: inputValueList["reviewerList"],
+          workSummary: inputValueList["workSummary"],
+          dueTime: inputValueList["dueTime"],
+          mergeRequestUrl: inputValueList["mergeRequestUrl"],
+          estimatedTime: inputValueList["estimatedTime"],
+          cherryPick: inputValueList["cherryPick"],
         });
 
         // Message the user
         try {
           await client.chat.postMessage(message);
+          logger.info(message);
         } catch (error) {
           logger.error(error);
         }
