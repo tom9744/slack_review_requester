@@ -93,7 +93,7 @@ class SlackBoltImpl implements SlackBolt {
     this._boltApp.view(
       "new_review_request",
       async ({ ack, view, body, client, logger }) => {
-        await ack();
+        await ack({ response_action: "clear" });
 
         const inputValueList = REVIEW_REQUEST_MODAL.blocks.reduce<{
           [key: string]: any;
