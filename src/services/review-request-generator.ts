@@ -56,7 +56,7 @@ export const generateReviewRequest = (
           },
           {
             type: "mrkdwn",
-            text: "*체리픽*\n" + `\`${cherryPickBranch}\``,
+            text: "*체리픽*\n" + cherryPickBranch,
           },
         ],
       },
