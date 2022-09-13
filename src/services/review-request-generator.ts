@@ -43,7 +43,6 @@ export const generateReviewRequest = (
       },
       {
         type: "section",
-
         text: { type: "mrkdwn", text: "*리뷰 기한*\n" + args.dueTime },
       },
       {
@@ -68,7 +67,7 @@ export const generateReviewRequest = (
             type: "button",
             text: { type: "plain_text", text: "리뷰 완료" },
             style: "primary",
-            value: "review_done",
+            action_id: "review_done",
           },
         ],
       },

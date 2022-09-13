@@ -1,7 +1,19 @@
-import { App, ExpressReceiver } from "@slack/bolt";
-import e, { Application } from "express";
+import {
+  App,
+  BlockAction,
+  ButtonAction,
+  ExpressReceiver,
+  SlackAction,
+} from "@slack/bolt";
+import { Application } from "express";
 import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
 import { generateReviewRequest } from "./services/review-request-generator";
+
+function isButtonBlockAction(
+  action: SlackAction
+): action is BlockAction<ButtonAction> {
+  return action.type === "block_actions" && action.actions[0].type === "button";
+}
 
 export interface SlackBolt {
   app: Application;
@@ -67,6 +79,26 @@ class SlackBoltImpl implements SlackBolt {
 
       try {
         await say(`일해라, <@U0268V06F5M>!`);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    this._boltApp.action("review_done", async ({ body, client, ack }) => {
+      await ack();
+
+      if (!isButtonBlockAction(body)) {
+        return;
+      }
+
+      try {
+        client.chat.update({
+          channel: body.channel!.id!,
+          ts: body.message!.ts,
+          text: `<@${body.user.id}> 님에 의해 완료되었습니다.`,
+          blocks: [],
+          as_user: true,
+        });
       } catch (error) {
         console.error(error);
       }
