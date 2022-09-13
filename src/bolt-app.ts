@@ -40,50 +40,6 @@ class SlackBoltImpl implements SlackBolt {
     });
     this._expressReceiver = receiver;
 
-    this._boltApp.event("app_mention", async ({ event, client }) => {
-      try {
-        await client.chat.postMessage({
-          channel: event.channel,
-          text: "Review Requester Mark II",
-          blocks: [
-            {
-              type: "section",
-              text: { type: "mrkdwn", text: "*Review Requester Mark II*" },
-            },
-            {
-              type: "context",
-              elements: [
-                { type: "mrkdwn", text: "긁적...아직 못 만들었습니다." },
-              ],
-            },
-            {
-              type: "actions",
-              elements: [
-                {
-                  type: "button",
-                  text: { type: "plain_text", text: "응원하기" },
-                  action_id: "button_click",
-                  value: "click me!",
-                },
-              ],
-            },
-          ],
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    this._boltApp.action("button_click", async ({ body, ack, say }) => {
-      await ack();
-
-      try {
-        await say(`일해라, <@U0268V06F5M>!`);
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
     this._boltApp.action("review_done", async ({ body, client, ack }) => {
       await ack();
 
