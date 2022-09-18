@@ -1,8 +1,10 @@
 import {
+  ActionsBlock,
   App,
   BlockAction,
   ButtonAction,
   ExpressReceiver,
+  SectionBlock,
   SlackAction,
 } from "@slack/bolt";
 import { Application } from "express";
@@ -58,7 +60,19 @@ class SlackBoltImpl implements SlackBolt {
         client.chat.update({
           channel: body.channel!.id!,
           ts: body.message!.ts,
-          text: `<@${body.user.id}> 님에 의해 완료되었습니다.`,
+          text: `리뷰가 완료되었습니다.`,
+          blocks: [
+            ...(
+              body.message!.blocks as Array<ActionsBlock | SectionBlock>
+            ).filter((block) => block.type === "section"),
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `<@${body.user.id}> 님에 의해 완료되었습니다.`,
+              },
+            },
+          ],
           as_user: true,
         });
       } catch (error) {
