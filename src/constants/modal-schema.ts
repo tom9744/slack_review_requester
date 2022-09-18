@@ -17,6 +17,7 @@ enum ModalContent {
   DueTime = "due_time",
   EstimatedTime = "estimated_time",
   CherryPick = "cherry_pick",
+  CarbonCopyList = "carbon_copy_list",
 }
 
 interface EnhancedInputBlock<T extends ModalContent, U extends ModalInput>
@@ -33,6 +34,7 @@ interface EnhancedModalView extends ModalView {
     | EnhancedInputBlock<ModalContent.DueTime, StaticSelect>
     | EnhancedInputBlock<ModalContent.EstimatedTime, PlainTextInput>
     | EnhancedInputBlock<ModalContent.CherryPick, PlainTextInput>
+    | EnhancedInputBlock<ModalContent.CarbonCopyList, MultiUsersSelect>
   >;
 }
 
@@ -139,6 +141,20 @@ const CHERRY_PICK: EnhancedInputBlock<ModalContent.CherryPick, PlainTextInput> =
     optional: true,
   };
 
+const CARBON_COPY_LIST: EnhancedInputBlock<
+  ModalContent.CarbonCopyList,
+  MultiUsersSelect
+> = {
+  type: "input",
+  block_id: "carbon_copy_list",
+  element: {
+    type: "multi_users_select",
+    action_id: "carbon_copy_list_action",
+  },
+  label: { type: "plain_text", text: "참조가 필요한 인원이 있나요?" },
+  optional: true,
+};
+
 export const REVIEW_REQUEST_MODAL: EnhancedModalView = {
   type: "modal",
   callback_id: "new_review_request",
@@ -150,6 +166,7 @@ export const REVIEW_REQUEST_MODAL: EnhancedModalView = {
     DUE_TIME,
     ESTIMATED_TIME,
     CHERRY_PICK,
+    CARBON_COPY_LIST,
   ],
   submit: {
     type: "plain_text",

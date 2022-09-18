@@ -7,6 +7,7 @@ import {
   SectionBlock,
   SlackAction,
 } from "@slack/bolt";
+import { ChatPostMessageResponse } from "@slack/web-api";
 import { Application } from "express";
 import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
 import {
@@ -132,20 +133,47 @@ class SlackBoltImpl implements SlackBolt {
           }
         }, {});
 
-        const message = generateReviewRequest({
-          author: body.user.id,
-          reviewerList: inputValueList["reviewerList"],
-          workSummary: inputValueList["workSummary"],
-          dueTime: inputValueList["dueTime"],
-          mergeRequestUrl: inputValueList["mergeRequestUrl"],
-          estimatedTime: inputValueList["estimatedTime"],
-          cherryPick: inputValueList["cherryPick"],
-        });
+        let response: ChatPostMessageResponse | null = null;
 
         // Message the user
         try {
-          await client.chat.postMessage(message);
-          logger.info(message);
+          response = await client.chat.postMessage(
+            generateReviewRequest({
+              author: body.user.id,
+              reviewerList: inputValueList["reviewerList"],
+              workSummary: inputValueList["workSummary"],
+              dueTime: inputValueList["dueTime"],
+              mergeRequestUrl: inputValueList["mergeRequestUrl"],
+              estimatedTime: inputValueList["estimatedTime"],
+              cherryPick: inputValueList["cherryPick"],
+            })
+          );
+          logger.info(response);
+        } catch (error) {
+          logger.error(error);
+        }
+
+        const carbonCopyList: string[] = inputValueList["carbonCopyList"];
+
+        if (
+          !response?.channel ||
+          !response?.ts ||
+          carbonCopyList.length === 0
+        ) {
+          return;
+        }
+
+        try {
+          await client.chat.postMessage({
+            channel: response.channel,
+            thread_ts: response.ts,
+            text:
+              "CC. " +
+              `${inputValueList["carbonCopyList"].map(
+                (id: string) => `<@${id}> `
+              )}`,
+            mrkdwn: true,
+          });
         } catch (error) {
           logger.error(error);
         }
