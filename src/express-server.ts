@@ -17,6 +17,10 @@ class ExpressServerImpl implements ExpressServer {
   constructor(slackBolt: SlackBolt) {
     const expressApp = express();
 
+    expressApp.get("/", (_, res) => {
+      res.send("Review Requester Mark 2");
+    });
+
     expressApp.use(EVENTS_END_POINT, slackBolt.app);
     expressApp.use(INTERACTIVITY_END_POINT, slackBolt.app);
     expressApp.use(SLASH_COMMAND_END_POINT, slackBolt.app);
