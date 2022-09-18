@@ -87,29 +87,29 @@ const DUE_TIME: EnhancedInputBlock<ModalContent.DueTime, StaticSelect> = {
     action_id: "due_time_action",
     options: [
       {
-        text: { type: "plain_text", text: "ASAP" },
-        value: "ASAP",
+        text: { type: "plain_text", text: "🔴 ASAP", emoji: true },
+        value: "🔴 ASAP",
       },
       {
-        text: { type: "plain_text", text: "EOD" },
-        value: "EOD",
+        text: { type: "plain_text", text: "🟡 EOD", emoji: true },
+        value: "🟡 EOD",
       },
       {
-        text: { type: "plain_text", text: "내일" },
-        value: "내일",
+        text: { type: "plain_text", text: "🟢 내일", emoji: true },
+        value: "🟢 내일",
       },
       {
-        text: { type: "plain_text", text: "이번주" },
-        value: "이번주",
+        text: { type: "plain_text", text: "🔵 이번주", emoji: true },
+        value: "🔵 이번주",
       },
       {
-        text: { type: "plain_text", text: "상관없음" },
-        value: "상관없음",
+        text: { type: "plain_text", text: "🔘 상관없음", emoji: true },
+        value: "🔘 상관없음",
       },
     ],
     initial_option: {
-      text: { type: "plain_text", text: "내일" },
-      value: "내일",
+      text: { type: "plain_text", text: "🟢 내일", emoji: true },
+      value: "🟢 내일",
     },
   },
   label: { type: "plain_text", text: "언제까지 리뷰가 완료되면 좋을까요?" },

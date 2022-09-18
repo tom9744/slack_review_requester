@@ -12,7 +12,9 @@ interface ReviewRequestArgs {
   cherryPick?: string;
 }
 
-const FRONTEND_MR_CHANNEL_ID = "C03RBJ56MUN";
+// TODO: DEV, PROD 환경 변수로 적용
+const LAB_CHANNEL_ID = "C040AM5Q198";
+const FRONTEND_MR_CHNNEL_ID = "C03RBJ56MUN";
 
 export enum ActionID {
   ReviewDone = "review_done",
@@ -23,7 +25,7 @@ export const generateReviewRequest = (
   args: ReviewRequestArgs
 ): ChatPostMessageArguments => {
   return {
-    channel: FRONTEND_MR_CHANNEL_ID,
+    channel: FRONTEND_MR_CHNNEL_ID,
     text: "리뷰 요청",
     blocks: [
       {
