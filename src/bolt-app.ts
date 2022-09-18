@@ -7,7 +7,10 @@ import {
 } from "@slack/bolt";
 import { Application } from "express";
 import { REVIEW_REQUEST_MODAL } from "./constants/modal-schema";
-import { generateReviewRequest } from "./services/review-request-generator";
+import {
+  ActionID,
+  generateReviewRequest,
+} from "./services/review-request-generator";
 
 function isButtonBlockAction(
   action: SlackAction
@@ -40,7 +43,11 @@ class SlackBoltImpl implements SlackBolt {
     });
     this._expressReceiver = receiver;
 
-    this._boltApp.action("review_done", async ({ body, client, ack }) => {
+    this._boltApp.action(ActionID.OpenMergeRequest, async ({ ack }) => {
+      await ack();
+    });
+
+    this._boltApp.action(ActionID.ReviewDone, async ({ body, client, ack }) => {
       await ack();
 
       if (!isButtonBlockAction(body)) {
@@ -52,7 +59,6 @@ class SlackBoltImpl implements SlackBolt {
           channel: body.channel!.id!,
           ts: body.message!.ts,
           text: `<@${body.user.id}> 님에 의해 완료되었습니다.`,
-          blocks: [],
           as_user: true,
         });
       } catch (error) {

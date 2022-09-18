@@ -14,6 +14,11 @@ interface ReviewRequestArgs {
 
 const FRONTEND_MR_CHNNEL_ID = "C040AM5Q198";
 
+export enum ActionID {
+  ReviewDone = "review_done",
+  OpenMergeRequest = "open_merge_request",
+}
+
 export const generateReviewRequest = (
   args: ReviewRequestArgs
 ): ChatPostMessageArguments => {
@@ -64,10 +69,16 @@ export const generateReviewRequest = (
         type: "actions",
         elements: [
           {
+            action_id: ActionID.ReviewDone,
             type: "button",
             text: { type: "plain_text", text: "리뷰 완료" },
             style: "primary",
-            action_id: "review_done",
+          },
+          {
+            action_id: ActionID.OpenMergeRequest,
+            type: "button",
+            text: { type: "plain_text", text: "MR 보기" },
+            url: args.mergeRequestUrl,
           },
         ],
       },
